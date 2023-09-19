@@ -7,9 +7,9 @@ export const userService = reactive({
   email: "",
   password: "",
   isLogged: false,
+  isLoading: false,
   showButton: false,
   user: localStorage.getItem("token"),
-
 
   async registerUser() {
     const data = {
@@ -22,9 +22,11 @@ export const userService = reactive({
       .post("https://localhost:7040/api/Acount/Register", data)
 
       .then((res) => {
+        this.isLoading = true;
+
         if (res.status == 201) {
           useRouter.push("/");
-          userService.showButton=true;
+          userService.showButton = true;
         }
       })
       .catch((err) => {
@@ -42,10 +44,12 @@ export const userService = reactive({
       .post("https://localhost:7040/api/Acount/Login", data)
 
       .then((res) => {
+        this.isLoading = true;
+
         if (res.status == 200) {
           localStorage.setItem("token", res.data.token);
           useRouter.push("/");
-          userService.showButton=true;
+          userService.showButton = true;
           userService.isLogged = true;
         }
       })
@@ -54,14 +58,15 @@ export const userService = reactive({
       });
   },
 
- logoutUser() {
-  localStorage.removeItem("token");
+  logoutUser() {
+    let user = localStorage.removeItem("token");
 
-
-  useRouter.push("/");
-  userService.isLogged =false;
-  userService.showButton=false;
-    
+    if (!user) {
+      useRouter.push("/");
+      userService.isLogged = false;
+      userService.showButton = false;
+      location.reload();
+    }
   },
 
   async getUser() {
@@ -70,16 +75,10 @@ export const userService = reactive({
       "https://localhost:7040/api/Acount/currentUser",
       {
         headers: {
-          Authorization: "Bearer " + token ,
-          'x-access-token': token 
-
+          Authorization: "Bearer " + token,
+          "x-access-token": token,
         },
       }
     );
-
-    console.log(token);
   },
-
-
-
 });

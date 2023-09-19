@@ -1,7 +1,6 @@
 import { reactive } from "vue";
 import axios from "axios";
 import useRouter from "../router";
-import { artistService } from '@/store/artist';
 
 export const trackService = reactive({
   title: "",
@@ -22,48 +21,67 @@ export const trackService = reactive({
   imagePreview: require("/src/assets/ImagePreview.jpg"),
   audioImagePreview: require("/src/assets/AudioPreview.png"),
   audioPreview: null,
+  artistName: null,
+  click: false,
+  isUpdating: false,
+  isDeleting: false,
+  isAdding: false,
 
+  async updateTrack() {
+    trackService.formData.append("title", trackService.title);
+    trackService.formData.append("gengre", trackService.gengre);
+    trackService.formData.append("description", trackService.description);
 
+    trackService.formData.append(
+      "coverImageURl",
+      trackService.selectedImage,
+      trackService.coverImageURlFile
+    );
+    trackService.formData.append(
+      "audioPlayerURL",
+      trackService.selectedAudio,
+      trackService.audioPlayerURLFile
+    );
 
-addArtist() {
-  console.log("dssdfs")
-},
+    trackService.creatorIds.forEach(function (value) {
+      trackService.formData.append("creatorIds", value);
+    });
 
+    await axios
+      .put(
+        `https://localhost:7040/api/Content/${trackService.trackId}`,
+        trackService.formData
+      )
+      .then((res) => {
+        if (res.status == 200) {
+          useRouter.push("/");
+          console.log("det gick");
+        }
+      });
+  },
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  removeArtist() {
+    trackService.creatorIds.splice(trackService.artistName, 1);
+  },
+  dropdownCh(e) {
+    trackService.artistName = e.value;
+    trackService.creatorIds.push(e);
+  },
 
   getSong(artistId) {
     axios.get(`https://localhost:7040/api/Content/${artistId}`).then((res) => {
-      songPlay.title = res.data.title;
-      songPlay.coverImageURl = res.data.coverImageURl;
-      songPlay.audioPlayerURL = res.data.audioPlayerURL;
+      trackService.title = res.data.title;
+      trackService.gengre = res.data.gengre;
+      trackService.description = res.data.description;
+      trackService.coverImageURL = res.data.coverImageURl;
+      trackService.audioPlayerURL = res.data.audioPlayerURL;
+      trackService.creatorIds = res.data.creatorName;
     });
   },
 
   getAllSongs() {
     axios.get("https://localhost:7040/api/Content").then((res) => {
-      songPlay.contents = res.data;
+      trackService.contents = res.data;
     });
   },
   updatePreviewImage(e) {
@@ -88,19 +106,37 @@ addArtist() {
 
     reader.readAsDataURL(trackService.selectedAudio);
   },
+  upploadAudio(e) {
+    trackService.selectedAudio = e.target.files[0];
+
+    let reader = new FileReader();
+
+    reader.onload = (e) => {
+      trackService.audioPlayerURL = e.target.result;
+    };
+
+    reader.readAsDataURL(trackService.selectedAudio);
+  },
+
+  upploadImage(e) {
+    trackService.selectedImage = e.target.files[0];
+
+    let reader = new FileReader();
+
+    reader.onload = (e) => {
+      trackService.coverImageURL = e.target.result;
+    };
+
+    reader.readAsDataURL(trackService.selectedImage);
+  },
 
   openUploadIamge() {
     document.getElementById("file-field-image").click();
-    console.log("fdsfssfd");
   },
   openUploadAudio() {
     document.getElementById("file-field-audio").click();
-    console.log("fdsfssfd");
   },
 
-  addCreatorId() {
-    trackService.creatorIds.push(trackService.template);
-  },
   async addTrack() {
     trackService.formData.append("title", trackService.title);
     trackService.formData.append("gengre", trackService.gengre);
@@ -125,8 +161,6 @@ addArtist() {
       .then((res) => {
         if (res.status == 200) {
           useRouter.push("/");
-          //location.reload();
-
         }
       });
   },
@@ -135,7 +169,16 @@ addArtist() {
     axios.delete(`https://localhost:7040/api/Content/${e}`).then((res) => {
       trackService.isRemoved = true;
       location.reload();
-      console.log("dfssssssssssssssssss")
     });
+  },
+  artistDelete() {
+    axios
+      .delete(`https://localhost:7040/api/Content/${trackService.trackId}`)
+      .then((res) => {
+        this.isDeleting = true;
+        if (res.status == 200) {
+          useRouter.push("/");
+        }
+      });
   },
 });

@@ -1,79 +1,65 @@
 import { reactive, ref } from "vue";
-import axios from "axios";
+import { trackService } from "@/store/track";
 
 export const songPlay = reactive({
-  title: "",
-  id: "",
-  coverImageURl: "",
-  audioPlayerURL: "",
-  contents: [],
-  creatorName: [],
   isPlaying: false,
+  isPlayingMP: false,
   isMute: false,
   loadingData: false,
   currentSongIndex: 0,
-  refAudioPlayer: null,
   isLooping: false,
   isMixing: false,
   audio: null,
+  isSelected: null,
 
-  getSong(artistId) {
-    axios.get(`https://localhost:7040/api/Content/${artistId}`).then((res) => {
-      songPlay.title = res.data.title;
-      songPlay.coverImageURl = res.data.coverImageURl;
-      songPlay.audioPlayerURL = res.data.audioPlayerURL;
-    });
-  },
-
-  getAllSongs() {
-    axios.get("https://localhost:7040/api/Content").then((res) => {
-      songPlay.contents = res.data;
-    });
-  },
   nextSong() {
+    songPlay.isSelected = songPlay.currentSongIndex + 1;
     const x = document.getElementById("audioId");
     x.autoplay = true;
-    if (this.currentSongIndex < songPlay.contents.length - 1) {
-      this.currentSongIndex++;
+    if (songPlay.currentSongIndex < trackService.contents.length - 1) {
+      songPlay.currentSongIndex++;
       songPlay.isPlaying = true;
     } else {
-      this.currentSongIndex = 0;
+      songPlay.currentSongIndex = 0;
       songPlay.isPlaying = true;
     }
   },
 
   prevSong() {
+    songPlay.isSelected = songPlay.currentSongIndex - 1;
+
     const x = document.getElementById("audioId");
     x.autoplay = true;
-    if (this.currentSongIndex != 0) {
-      this.currentSongIndex--;
+    if (songPlay.currentSongIndex != 0) {
+      songPlay.currentSongIndex--;
       songPlay.isPlaying = true;
     } else {
-      this.currentSongIndex = songPlay.contents.length - 1;
+      songPlay.currentSongIndex = trackService.contents.length - 1;
       songPlay.isPlaying = true;
     }
   },
 
-  toggleSong(index) {
+  toggleIcons(id) {
     const x = document.getElementById("audioId");
 
-    this.currentSongIndex = index;
+    songPlay.currentSongIndex = id;
 
-        if (x.paused) {
-      songPlay.isPlaying = true;
+    this.isSelected === id ? (this.isSelected = null) : (this.isSelected = id);
+
+    if (this.isSelected != null) {
+      x.autoplay = true;
       x.play();
-      
+      songPlay.isPlaying = true;
     } else {
-      songPlay.isPlaying = false;
       x.pause();
+      songPlay.isPlaying = false;
     }
-    
-
-  
-    
-   
-      
-  
-    
   },
+
+  playDetailSong(id) {
+   // songPlay.currentSongIndex = id;
+   // this.isSelected === id ? (this.isSelected = null) : (this.isSelected = id);
+   console
+   .log(id)
+  }
 });

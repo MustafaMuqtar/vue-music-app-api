@@ -1,30 +1,18 @@
 <template>
-  <div class="container-fluid">
+  <div class="container-fluid ">
     <div class="row">
-      <div class="col-2">
+      <div class="col-2 bg-dark">
         <navbar></navbar>
       </div>
       <div class="col-7">
         <div class="d-grid gap-2 d-md-flex justify-content-md-end bg-dark">
 
-          <router-link to="/register" class="btn btn-dark me-md-2" type="button"  v-if="!userService.isLogged">
+          <router-link to="/register" class="btn btn-dark me-md-2" type="button" v-if="!userService.isLogged">
             Sign Up</router-link>
-
-
-
-          <button @click="userService.logoutUser()" class="btn btn-light me-md-2" type="submit"  v-if="userService.isLogged"> Logga ut</button>
+          <button @click="userService.logoutUser()" class="btn btn-light me-md-2" type="submit"
+            v-if="userService.isLogged"> Logga ut</button>
           <router-link to="/login" class="btn btn-light me-md-2" type="button" v-if="!userService.isLogged">
             Login</router-link>
-
-          <!--    <div class="dropdown">
-            <button class="btn btn-dark dropdown-toggle" type="button" data-bs- toggle="dropdown" aria- expanded="false">
-              <i class="bi bi-person-circle"></i> </button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#"> Action </a></li>
-              <li><a class="dropdown-item" href="#"> Another action </a></li>
-              <li><a class="dropdown-item" href="#"> Something else here </a></li>
-            </ul>
-          </div>-->
         </div>
 
         <div class="col " id="b">
@@ -50,6 +38,8 @@ import musicPlayer from './components/musicPlayer.vue'
 import { onMounted } from 'vue';
 import { songPlay } from '@/store/song';
 import { userService } from './store/user';
+import { trackService } from '@/store/track';
+
 
 
 
@@ -57,12 +47,12 @@ import { userService } from './store/user';
 
 onMounted(() => {
 
-  songPlay.getAllSongs();
-if (userService.user) {
+  trackService.getAllSongs();
+  if (userService.user) {
 
-  userService.isLogged =true;
-  userService.showButton =true;
-}
+    userService.isLogged = true;
+    userService.showButton = true;
+  }
 
 })
 

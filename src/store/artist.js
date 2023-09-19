@@ -17,11 +17,11 @@ export const artistService = reactive({
   formData: new FormData(),
   imagePreviews: require("/src/assets/ImagePreview.jpg"),
   singID: "",
-  isLoading: false,
-  isLoading2: false,
-  isClicked: false,
-
+  isAdding: false,
+  isUpdating: false,
+  isDeleting: false,
   template: "",
+  testArray: [],
 
   getArtistById(artistId) {
     axios.get(`https://localhost:7040/api/Creator/${artistId}`).then((res) => {
@@ -40,12 +40,11 @@ export const artistService = reactive({
   },
 
   artistRemove(artistId) {
+    artistService.isDeleting = true;
     axios
       .delete(`https://localhost:7040/api/Creator/${artistId}`)
       .then((res) => {
-        
         location.reload();
-
       });
   },
 
@@ -66,8 +65,6 @@ export const artistService = reactive({
   },
 
   upploadImage(e) {
-
-    
     artistService.selectedImage = e.target.files[0];
 
     let reader = new FileReader();
@@ -79,6 +76,7 @@ export const artistService = reactive({
     reader.readAsDataURL(artistService.selectedImage);
   },
   async addArtist() {
+    artistService.isAdding = true;
     this.isLoading = true;
     artistService.formData.append("fullName", artistService.fullNameCreate);
     artistService.formData.append(
@@ -92,12 +90,13 @@ export const artistService = reactive({
       .then((res) => {
         if (res.status == 200) {
           useRouter.push("/");
+          //location.reload();
         }
       });
   },
 
   async updateArtist() {
-    this.isLoading = true;
+    artistService.isUpdating = true;
     artistService.formData.append("fullName", artistService.fullName);
     artistService.formData.append(
       "imageURL",
@@ -118,7 +117,7 @@ export const artistService = reactive({
   },
 
   artistDelete() {
-    this.isLoading2 = true;
+    artistService.isDeleting = true;
     axios
       .delete(`https://localhost:7040/api/Creator/${artistService.singID}`)
       .then((res) => {
@@ -126,5 +125,16 @@ export const artistService = reactive({
           useRouter.push("/");
         }
       });
+  },
+
+  newArray() {
+
+    const arr=[];
+    arr = this.contentTitles.concat(this.contentImages, this.contentAudios);
+
+    console.log(arr ); 
+    console.log(this.contentTitles ); 
+    console.log("jdjdjdjdsj" ); 
+    // Expected output: Array ["a", "b", "c", "d", "e", "f"]
   },
 });
