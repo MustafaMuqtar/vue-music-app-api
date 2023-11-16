@@ -68,8 +68,8 @@ export const trackService = reactive({
     trackService.creatorIds.push(e);
   },
 
-  getSong(artistId) {
-    axios.get(`https://localhost:7040/api/Content/${artistId}`).then((res) => {
+ async getSong(artistId) {
+  await  axios.get(`https://localhost:7040/api/Content/${artistId}`).then((res) => {
       trackService.title = res.data.title;
       trackService.gengre = res.data.gengre;
       trackService.description = res.data.description;
@@ -79,8 +79,8 @@ export const trackService = reactive({
     });
   },
 
-  getAllSongs() {
-    axios.get("https://localhost:7040/api/Content").then((res) => {
+ async getAllSongs() {
+ await   axios.get("https://localhost:7040/api/Content").then((res) => {
       trackService.contents = res.data;
     });
   },

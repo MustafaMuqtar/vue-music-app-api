@@ -19,7 +19,7 @@ import { useRoute, useRouter } from "vue-router";
 const router = useRouter();
 
 const route = useRoute();
-
+/*
 onMounted(() => {
   if (localStorage.getItem("reloaded")) {
     // The page was just reloaded. Clear the value from local storage
@@ -30,7 +30,7 @@ onMounted(() => {
     localStorage.setItem("reloaded", "1");
     location.reload();
   }
-});
+});*/
 </script>
 
 <style scoped></style>

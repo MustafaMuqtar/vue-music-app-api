@@ -8,9 +8,7 @@ export const artistService = reactive({
   imageURL: "",
   imageURLFile: File,
   artists: [],
-  contentImages: [],
-  contentAudios: [],
-  contentTitles: [],
+  contentInformation: [],
   isShow: false,
   isClicked: false,
   selectedImage: null,
@@ -21,20 +19,17 @@ export const artistService = reactive({
   isUpdating: false,
   isDeleting: false,
   template: "",
-  testArray: [],
 
-  getArtistById(artistId) {
-    axios.get(`https://localhost:7040/api/Creator/${artistId}`).then((res) => {
+  async getArtistById(artistId) {
+    await axios.get(`https://localhost:7040/api/Creator/${artistId}`).then((res) => {
       artistService.fullName = res.data.fullName;
       artistService.imageURL = res.data.imageURL;
-      artistService.contentImages = res.data.contentImages;
-      artistService.contentAudios = res.data.contentAudios;
-      artistService.contentTitles = res.data.contentTitles;
+      artistService.contentInformation = res.data.contentInformation;
     });
   },
 
-  getAllArtist() {
-    axios.get("https://localhost:7040/api/Creator").then((res) => {
+ async getAllArtist() {
+  await  axios.get("https://localhost:7040/api/Creator").then((res) => {
       artistService.artists = res.data;
     });
   },
@@ -125,16 +120,5 @@ export const artistService = reactive({
           useRouter.push("/");
         }
       });
-  },
-
-  newArray() {
-
-    const arr=[];
-    arr = this.contentTitles.concat(this.contentImages, this.contentAudios);
-
-    console.log(arr ); 
-    console.log(this.contentTitles ); 
-    console.log("jdjdjdjdsj" ); 
-    // Expected output: Array ["a", "b", "c", "d", "e", "f"]
   },
 });
